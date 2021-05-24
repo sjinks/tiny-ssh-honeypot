@@ -1,0 +1,8 @@
+#ifndef D0A56A95_5AD6_4B84_83AC_81D29DBE4C9F
+#define D0A56A95_5AD6_4B84_83AC_81D29DBE4C9F
+
+struct globals_t;
+
+int run(struct globals_t* g);
+
+#endif /* D0A56A95_5AD6_4B84_83AC_81D29DBE4C9F */

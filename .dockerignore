@@ -1,0 +1,6 @@
+*
+!cmake/
+!CMakeLists.txt
+!*.h
+!*.c
+!*.in
