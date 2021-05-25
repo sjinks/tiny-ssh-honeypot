@@ -43,7 +43,7 @@ jobs:
         working-directory: build
 
       - name: Run ldd
-        run: ldd tiny-ssh-honeypot
+        run: ldd tiny-ssh-honeypot || true
         working-directory: build
 
       - name: Run ls
