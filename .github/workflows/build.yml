@@ -1,0 +1,43 @@
+name: Build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, '[ci skip]') || github.event_name == 'workflow_dispatch' }}
+    strategy:
+      fail-fast: true
+      matrix:
+        CC:
+          - gcc
+          - clang
+        PARAMS:
+          - ""
+          - "-DFORCE_EXTERNAL_LIBEV=ON"
+          - "-DBUILD_STATIC_BINARY=ON"
+          - "-DBUILD_STATIC_BINARY=ON -DFORCE_EXTERNAL_LIBEV=ON"
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v2.3.4
+
+      - name: Install dependencies
+        run: sudo apt-get -qq update && sudo apt-get install -y libev-dev
+
+      - name: Prepare build folder
+        run: mkdir build
+
+      - name: Run cmake
+        run: CC=${{ matrix.CC }} cmake ${{ matrix.PARAMS }} ..
+        working-directory: build
+
+      - name: Run make
+        run: make
+        working-directory: build
+
+      - name: Smoke test
+        run: ./tiny-ssh-honeypot --help
+        working-directory: build
