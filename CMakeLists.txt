@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.13)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -8,7 +8,6 @@ include(CheckCCompilerFlag)
 
 project(tiny-ssh-honeypot VERSION 1.0.0 LANGUAGES C)
 
-set(CMAKE_COLOR_MAKEFILE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -18,17 +17,65 @@ set(CMAKE_BUILD_TYPE MinSizeRel)
 set(CMAKE_C_VISIBILITY_PRESET hidden)
 set(CMAKE_C_EXTENSIONS OFF)
 
-configure_file(version.h.in version.h)
+set(MY_CFLAGS "")
+check_c_compiler_flag(-Wall HAS_CF_WALL)
+if(HAS_CF_WALL)
+    list(APPEND MY_CFLAGS -Wall)
+endif()
+
+check_c_compiler_flag(-Wextra HAS_CF_WEXTRA)
+if(HAS_CF_WEXTRA)
+    list(APPEND MY_CFLAGS -Wextra)
+endif()
+
+check_c_compiler_flag(-Wno-unused-parameter HAS_CF_WNOUNUSEDPARAMETER)
+if(HAS_CF_WNOUNUSEDPARAMETER)
+    list(APPEND MY_CFLAGS -Wno-unused-parameter)
+endif()
+
+check_c_compiler_flag(-fno-strict-aliasing HAS_CF_FNOSTRICTALIASING)
+if(HAS_CF_FNOSTRICTALIASING)
+    list(APPEND MY_CFLAGS -fno-strict-aliasing)
+endif()
+
+string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+
+set(LTO_FLAGS "")
+check_c_compiler_flag(-flto HAS_CF_FLTO)
+if(HAS_CF_FLTO)
+    list(APPEND LTO_FLAGS -flto)
+
+    check_c_compiler_flag(-ffat-lto-objects HAS_CF_FFATLTOOBJECTS)
+    if(HAS_CF_FFATLTOOBJECTS)
+        list(APPEND LTO_FLAGS -ffat-lto-objects)
+    endif()
+
+    check_c_compiler_flag(-fuse-linker-plugin HAS_CF_FUSELINKERPLUGIN)
+    if(HAS_CF_FUSELINKERPLUGIN)
+        list(APPEND LTO_FLAGS -fuse-linker-plugin)
+    endif()
+endif()
+
+list(APPEND EXT_CFLAGS ${CMAKE_C_FLAGS_${BUILD_TYPE}} ${LTO_FLAGS})
+list(JOIN EXT_CFLAGS " " EXT_CFLAGS)
+if(HAS_CF_FLTO)
+    list(APPEND EXT_LDFLAGS ${CMAKE_C_FLAGS_${BUILD_TYPE}} ${LTO_FLAGS})
+    list(JOIN EXT_LDFLAGS " " EXT_LDFLAGS)
+    list(APPEND LTO_LDFLAGS ${CMAKE_C_FLAGS_${BUILD_TYPE}} ${LTO_FLAGS})
+    separate_arguments(LTO_LDFLAGS)
+endif()
+
+configure_file(src/version.h.in version.h)
 
 add_executable(
     tiny-ssh-honeypot
-    cmdline.c
-    globals.c
-    log.c
-    main.c
-    server.c
-    socketutils.c
-    utils.c
+    src/cmdline.c
+    src/globals.c
+    src/log.c
+    src/main.c
+    src/server.c
+    src/socketutils.c
+    src/utils.c
 )
 
 option(BUILD_STATIC_BINARY     "Build static binary"       OFF)
@@ -40,7 +87,7 @@ if(BUILD_STATIC_BINARY)
     set(CMAKE_EXE_LINKER_FLAGS "-static")
 endif()
 
-find_program(MAKE_EXE NAMES gmake nmake make)
+find_program(MAKE_EXE NAMES gmake nmake make REQUIRED)
 
 if(NOT FORCE_EXTERNAL_LIBEV)
     find_package(Libev)
@@ -55,7 +102,8 @@ if(NOT LIBASSH_FOUND)
         libassh
         URL http://download.savannah.nongnu.org/releases/libassh/libassh-1.0.tar.gz
         URL_HASH MD5=1705b4a78e249a55fcd762720aacbc5c
-        CONFIGURE_COMMAND <SOURCE_DIR>/configure --disable-client --disable-examples --without-gcrypt --without-openssl --without-sodium --without-zlib --disable-dependency-tracking --prefix=${CMAKE_CURRENT_BINARY_DIR}/libassh
+        DOWNLOAD_NO_PROGRESS ON
+        CONFIGURE_COMMAND <SOURCE_DIR>/configure --quiet --enable-silent-rules --disable-client --disable-examples --without-gcrypt --without-openssl --without-sodium --without-zlib --disable-dependency-tracking --prefix=${CMAKE_CURRENT_BINARY_DIR}/libassh CC=${CMAKE_C_COMPILER} CFLAGS=${EXT_CFLAGS} LDFLAGS=${EXT_LDFLAGS} AR=${CMAKE_AR} RANLIB=${CMAKE_RANLIB}
         BUILD_COMMAND ${MAKE_EXE}
     )
 
@@ -75,7 +123,8 @@ if(NOT LIBEV_FOUND)
         libev
         URL http://dist.schmorp.de/libev/Attic/libev-4.33.tar.gz
         URL_HASH MD5=a3433f23583167081bf4acdd5b01b34f
-        CONFIGURE_COMMAND <SOURCE_DIR>/configure --disable-dependency-tracking --prefix=${CMAKE_CURRENT_BINARY_DIR}/libev
+        DOWNLOAD_NO_PROGRESS ON
+        CONFIGURE_COMMAND <SOURCE_DIR>/configure --quiet --enable-silent-rules --disable-dependency-tracking --prefix=${CMAKE_CURRENT_BINARY_DIR}/libev CC=${CMAKE_C_COMPILER} CFLAGS=${EXT_CFLAGS} LDFLAGS=${EXT_LDFLAGS} AR=${CMAKE_AR} RANLIB=${CMAKE_RANLIB}
         BUILD_COMMAND ${MAKE_EXE}
     )
 
@@ -84,29 +133,10 @@ if(NOT LIBEV_FOUND)
     add_dependencies(tiny-ssh-honeypot libev)
 endif()
 
-check_c_compiler_flag(-Wall HAS_CF_WALL)
-if(HAS_CF_WALL)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
-endif()
-
-check_c_compiler_flag(-Wextra HAS_CF_WEXTRA)
-if(HAS_CF_WEXTRA)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wextra")
-endif()
-
-check_c_compiler_flag(-Wno-unused-parameter HAS_CF_WNOUNUSEDPARAMETER)
-if(HAS_CF_WNOUNUSEDPARAMETER)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-parameter")
-endif()
-
-check_c_compiler_flag(-fno-strict-aliasing HAS_CF_FNOSTRICTALIASING)
-if(HAS_CF_FNOSTRICTALIASING)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-strict-aliasing")
-endif()
-
-target_include_directories(tiny-ssh-honeypot PUBLIC ${LIBASSH_INCLUDE_DIRS} ${LIBEV_INCLUDE_DIRS})
-target_include_directories(tiny-ssh-honeypot PUBLIC "${PROJECT_BINARY_DIR}")
+target_include_directories(tiny-ssh-honeypot PUBLIC ${LIBASSH_INCLUDE_DIRS} ${LIBEV_INCLUDE_DIRS} ${PROJECT_BINARY_DIR})
 if(UNIX)
     target_compile_definitions(tiny-ssh-honeypot PUBLIC _GNU_SOURCE)
 endif()
-target_link_libraries(tiny-ssh-honeypot ${LIBASSH_LIBRARIES} ${LIBEV_LIBRARIES} "${MATH_LIBS}")
+target_compile_options(tiny-ssh-honeypot PUBLIC ${MY_CFLAGS} ${LTO_FLAGS})
+target_link_options(tiny-ssh-honeypot PUBLIC ${LTO_LDFLAGS})
+target_link_libraries(tiny-ssh-honeypot ${LIBASSH_LIBRARIES} ${LIBEV_LIBRARIES} ${MATH_LIBS})

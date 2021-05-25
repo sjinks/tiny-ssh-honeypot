@@ -1,6 +1,4 @@
 *
 !cmake/
+!src/
 !CMakeLists.txt
-!*.h
-!*.c
-!*.in
