@@ -41,3 +41,11 @@ jobs:
       - name: Smoke test
         run: ./tiny-ssh-honeypot --help
         working-directory: build
+
+      - name: Run ldd
+        run: ldd tiny-ssh-honeypot
+        working-directory: build
+
+      - name: Run ls
+        run: ls -l tiny-ssh-honeypot
+        working-directory: build
