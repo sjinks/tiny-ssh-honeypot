@@ -46,6 +46,10 @@ jobs:
         run: ldd tiny-ssh-honeypot || true
         working-directory: build
 
+      - name: Strip the binary
+        run: strip tiny-ssh-honeypot
+        working-directory: build
+
       - name: Run ls
         run: ls -l tiny-ssh-honeypot
         working-directory: build
