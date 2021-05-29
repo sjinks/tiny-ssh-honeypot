@@ -1,8 +1,6 @@
 name: Docker CI/CD
 
 on:
-  schedule:
-    - cron: '0 10 * * *'
   push:
     branches:
       - master
@@ -31,7 +29,6 @@ jobs:
         with:
           images: wildwildangel/tiny-ssh-honeypot
           tags: |
-            type=schedule
             type=edge
             type=ref,event=pr
             type=semver,pattern={{version}}

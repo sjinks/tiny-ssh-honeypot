@@ -2,6 +2,13 @@ name: Build
 
 on:
   push:
+    paths:
+      - "CMakeLists.txt"
+      - "src/*.c"
+      - "src/*.h"
+      - "src/*.h.in"
+      - "cmake/*"
+      - ".github/workflows/build.yml"
   workflow_dispatch:
 
 jobs:
