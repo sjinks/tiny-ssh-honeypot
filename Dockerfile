@@ -16,3 +16,4 @@ RUN strip tiny-ssh-honeypot
 
 FROM scratch
 COPY --from=build /build/build/tiny-ssh-honeypot /tiny-ssh-honeypot
+ENTRYPOINT ["/tiny-ssh-honeypot"]
