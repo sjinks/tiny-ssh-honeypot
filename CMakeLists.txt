@@ -89,6 +89,14 @@ endif()
 
 find_program(MAKE_EXE NAMES gmake nmake make REQUIRED)
 
+find_program(CCACHE_EXE ccache)
+if(CCACHE_EXE)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CCACHE_EXE})
+    set(C_COMPILER "${CCACHE_EXE} ${CMAKE_C_COMPILER}")
+else()
+    set(C_COMPILER ${CMAKE_C_COMPILER})
+endif()
+
 if(NOT FORCE_EXTERNAL_LIBEV)
     find_package(Libev)
 endif()
@@ -103,7 +111,7 @@ if(NOT LIBASSH_FOUND)
         URL http://download.savannah.nongnu.org/releases/libassh/libassh-1.0.tar.gz
         URL_HASH MD5=1705b4a78e249a55fcd762720aacbc5c
         DOWNLOAD_NO_PROGRESS ON
-        CONFIGURE_COMMAND <SOURCE_DIR>/configure --quiet --enable-silent-rules --disable-client --disable-examples --without-gcrypt --without-openssl --without-sodium --without-zlib --disable-dependency-tracking --prefix=${CMAKE_CURRENT_BINARY_DIR}/libassh CC=${CMAKE_C_COMPILER} CFLAGS=${EXT_CFLAGS} LDFLAGS=${EXT_LDFLAGS} AR=${CMAKE_AR} RANLIB=${CMAKE_RANLIB}
+        CONFIGURE_COMMAND <SOURCE_DIR>/configure --quiet --enable-silent-rules --disable-client --disable-examples --without-gcrypt --without-openssl --without-sodium --without-zlib --disable-dependency-tracking --prefix=${CMAKE_CURRENT_BINARY_DIR}/libassh CC=${C_COMPILER} CFLAGS=${EXT_CFLAGS} LDFLAGS=${EXT_LDFLAGS} AR=${CMAKE_AR} RANLIB=${CMAKE_RANLIB}
         BUILD_COMMAND ${MAKE_EXE}
     )
 
@@ -124,7 +132,7 @@ if(NOT LIBEV_FOUND)
         URL http://dist.schmorp.de/libev/Attic/libev-4.33.tar.gz
         URL_HASH MD5=a3433f23583167081bf4acdd5b01b34f
         DOWNLOAD_NO_PROGRESS ON
-        CONFIGURE_COMMAND <SOURCE_DIR>/configure --quiet --enable-silent-rules --disable-dependency-tracking --prefix=${CMAKE_CURRENT_BINARY_DIR}/libev CC=${CMAKE_C_COMPILER} CFLAGS=${EXT_CFLAGS} LDFLAGS=${EXT_LDFLAGS} AR=${CMAKE_AR} RANLIB=${CMAKE_RANLIB}
+        CONFIGURE_COMMAND <SOURCE_DIR>/configure --quiet --enable-silent-rules --disable-dependency-tracking --prefix=${CMAKE_CURRENT_BINARY_DIR}/libev CC=${C_COMPILER} CFLAGS=${EXT_CFLAGS} LDFLAGS=${EXT_LDFLAGS} AR=${CMAKE_AR} RANLIB=${CMAKE_RANLIB}
         BUILD_COMMAND ${MAKE_EXE}
     )
 
