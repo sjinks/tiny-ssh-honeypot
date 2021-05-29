@@ -48,7 +48,7 @@ void init_globals(struct globals_t* g)
     if (
         assh_context_create(&g->context, ASSH_SERVER, NULL, NULL, NULL, &buf) ||
         assh_service_register_default(g->context) ||
-        assh_algo_register_default(g->context, ASSH_SAFETY_MEDIUM)
+        assh_algo_register_default(g->context, ASSH_SAFETY_WEAK)
     ) {
         my_log("FATAL ERROR: unable to create the server context");
         exit(EXIT_FAILURE);
