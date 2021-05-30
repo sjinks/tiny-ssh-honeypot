@@ -87,8 +87,6 @@ if(BUILD_STATIC_BINARY)
     set(CMAKE_EXE_LINKER_FLAGS "-static")
 endif()
 
-find_program(MAKE_EXE NAMES gmake nmake make REQUIRED)
-
 find_program(CCACHE_EXE ccache)
 if(CCACHE_EXE)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CCACHE_EXE})
@@ -112,7 +110,6 @@ if(NOT LIBASSH_FOUND)
         URL_HASH MD5=1705b4a78e249a55fcd762720aacbc5c
         DOWNLOAD_NO_PROGRESS ON
         CONFIGURE_COMMAND <SOURCE_DIR>/configure --quiet --enable-silent-rules --disable-client --disable-examples --without-gcrypt --without-openssl --without-sodium --without-zlib --disable-dependency-tracking --prefix=${CMAKE_CURRENT_BINARY_DIR}/libassh CC=${C_COMPILER} CFLAGS=${EXT_CFLAGS} LDFLAGS=${EXT_LDFLAGS} AR=${CMAKE_AR} RANLIB=${CMAKE_RANLIB}
-        BUILD_COMMAND ${MAKE_EXE}
     )
 
     set(LIBASSH_LIBRARIES    "${PROJECT_BINARY_DIR}/libassh/lib/${CMAKE_STATIC_LIBRARY_PREFIX}assh${CMAKE_STATIC_LIBRARY_SUFFIX}")
@@ -133,7 +130,6 @@ if(NOT LIBEV_FOUND)
         URL_HASH MD5=a3433f23583167081bf4acdd5b01b34f
         DOWNLOAD_NO_PROGRESS ON
         CONFIGURE_COMMAND <SOURCE_DIR>/configure --quiet --enable-silent-rules --disable-dependency-tracking --prefix=${CMAKE_CURRENT_BINARY_DIR}/libev CC=${C_COMPILER} CFLAGS=${EXT_CFLAGS} LDFLAGS=${EXT_LDFLAGS} AR=${CMAKE_AR} RANLIB=${CMAKE_RANLIB}
-        BUILD_COMMAND ${MAKE_EXE}
     )
 
     set(LIBEV_LIBRARIES    "${PROJECT_BINARY_DIR}/libev/lib/${CMAKE_STATIC_LIBRARY_PREFIX}ev${CMAKE_STATIC_LIBRARY_SUFFIX}")
