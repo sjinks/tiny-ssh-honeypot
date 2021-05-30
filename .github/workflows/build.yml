@@ -34,29 +34,20 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get -qq update && sudo apt-get install -y libev-dev
 
-      - name: Prepare build folder
-        run: mkdir build
+      - name: Configure
+        run: CC=${{ matrix.CC }} cmake -S . -B build ${{ matrix.PARAMS }}
 
-      - name: Run cmake
-        run: CC=${{ matrix.CC }} cmake ${{ matrix.PARAMS }} ..
-        working-directory: build
-
-      - name: Run make
-        run: make
-        working-directory: build
+      - name: Build
+        run: cmake --build build
 
       - name: Smoke test
-        run: ./tiny-ssh-honeypot --help
-        working-directory: build
+        run: ./build/tiny-ssh-honeypot --help
 
       - name: Run ldd
-        run: ldd tiny-ssh-honeypot || true
-        working-directory: build
+        run: ldd ./build/tiny-ssh-honeypot || true
 
       - name: Strip the binary
-        run: strip tiny-ssh-honeypot
-        working-directory: build
+        run: strip ./build/tiny-ssh-honeypot
 
       - name: Run ls
-        run: ls -l tiny-ssh-honeypot
-        working-directory: build
+        run: ls -l ./build/tiny-ssh-honeypot

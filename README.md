@@ -30,11 +30,31 @@ The build script defines the following command-line options:
 To build the program, you will need `cmake`, a C compiler (say, `clang` or `gcc`), and a make tool (`make`). The program builds on Linux and may (or may not) build on other systems (like Windows).
 
 ```bash
-mkdir build
-cd build
-cmake ..
-make
+cmake -S . -B build
+cmake --build build
 ```
+
+## Build Docker Image
+
+If you have [Buildx](https://docs.docker.com/buildx/working-with-buildx/) installed:
+
+```bash
+docker buildx build --pull --tag wildwildangel/tiny-ssh-honeypot --load -f Dockerfile.buildx .
+```
+
+If you have [BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/) enabled:
+
+```bash
+DOCKER_BUILDKIT=1 docker build --pull --tag wildwildangel/tiny-ssh-honeypot --load -f Dockerfile.buildx .
+```
+
+Otherwise,
+
+```bash
+docker build --pull -t wildwildangel/tiny-ssh-honeypot -f Dockerfile .
+```
+
+The difference is that without BuildKit or Buildx, Docker does not copy the [extended file attributes](https://en.wikipedia.org/wiki/Extended_file_attributes#Linux) between images; therefore, several extra steps are necessary to build the final image.
 
 ## Usage
 

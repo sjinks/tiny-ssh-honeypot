@@ -1,5 +1,5 @@
 FROM alpine:3.13 AS build
-RUN apk add --no-cache cmake make musl-dev gcc
+RUN apk add --no-cache cmake make musl-dev gcc libcap
 WORKDIR /build
 COPY --from=wildwildangel/tiny-ssh-honeypot-build-dependencies /usr /usr
 COPY . .
@@ -11,12 +11,9 @@ RUN \
         -DCMAKE_RANLIB=/usr/bin/gcc-ranlib \
     && \
     cmake --build build --config MinSizeRel -j 2 && \
-    strip build/tiny-ssh-honeypot
+    strip build/tiny-ssh-honeypot && \
+    setcap cap_net_bind_service=ep /tiny-ssh-honeypot
 
-# COPY does not preserve extended attributes, therefore we cannot set the proper capabilities
-# in the build image
 FROM scratch
-COPY --from=wildwildangel/setcap-static /setcap-static /!setcap-static
 COPY --from=build /build/build/tiny-ssh-honeypot /tiny-ssh-honeypot
-RUN ["/!setcap-static", "cap_net_bind_service=ep", "/tiny-ssh-honeypot"]
 ENTRYPOINT ["/tiny-ssh-honeypot"]
