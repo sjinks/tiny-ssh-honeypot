@@ -24,4 +24,4 @@ jobs:
           username: ${{ secrets.DOCKER_LOGIN }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: wildwildangel/tiny-ssh-honeypot
-          short-description: A a lightweight low-interaction SSH honeypot
+          short-description: A lightweight low-interaction SSH honeypot
