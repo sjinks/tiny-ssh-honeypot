@@ -1,7 +1,7 @@
 FROM alpine:3.13 AS build
-ARG BUILD_PARALLELISM=4
-RUN apk add --no-cache cmake make musl-dev gcc file
+RUN apk add --no-cache cmake make musl-dev gcc
 WORKDIR /build
+COPY --from=wildwildangel/tiny-ssh-honeypot-build-dependencies /usr /usr
 COPY . .
 RUN \
     cmake -S . -B build \
