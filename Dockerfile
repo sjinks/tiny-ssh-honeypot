@@ -10,7 +10,7 @@ RUN \
         -DCMAKE_AR=/usr/bin/gcc-ar \
         -DCMAKE_RANLIB=/usr/bin/gcc-ranlib \
     && \
-    cmake --build build --config MinSizeRel -j ${BUILD_PARALLELISM} && \
+    cmake --build build --config MinSizeRel -j 2 && \
     strip build/tiny-ssh-honeypot
 
 # COPY does not preserve extended attributes, therefore we cannot set the proper capabilities
