@@ -1,0 +1,40 @@
+FROM alpine:3.13 AS build
+RUN apk add --no-cache make musl-dev gcc file
+ENV \
+    CFLAGS="-Os -g0 -flto -ffat-lto-objects -fuse-linker-plugin -fno-strict-aliasing" \
+    LDLAGS="-Os -g0 -flto -ffat-lto-objects -fuse-linker-plugin -fno-strict-aliasing" \
+    AR=/usr/bin/gcc-ar \
+    RANLIB=/usr/bin/gcc-ranlib
+
+WORKDIR /build/libev
+RUN wget -q http://dist.schmorp.de/libev/Attic/libev-4.33.tar.gz -O - | tar xzf - --strip-components=1
+RUN \
+    ./configure \
+        --quiet \
+        --enable-silent-rules \
+        --disable-dependency-tracking \
+        --prefix=/usr \
+    && \
+    make -j2 && \
+    make install DESTDIR=/rootfs
+
+WORKDIR /build/libassh
+RUN wget -q http://download.savannah.nongnu.org/releases/libassh/libassh-1.0.tar.gz -O - | tar xzf - --strip-components=1
+RUN \
+    ./configure \
+        --quiet \
+        --enable-silent-rules \
+        --disable-dependency-tracking \
+        --disable-client \
+        --disable-examples \
+        --without-gcrypt \
+        --without-openssl \
+        --without-sodium \
+        --without-zlib \
+        --prefix=/usr \
+    && \
+    make -j2 && \
+    make install DESTDIR=/rootfs
+
+FROM scratch
+COPY --from=build /rootfs/usr /usr
