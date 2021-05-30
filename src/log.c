@@ -17,7 +17,7 @@ void my_log(const char *format, ...)
     fprintf(
         stderr, "%s %s[%d]: ",
         timestring,
-        "ssh-honeypotd",
+        "tiny-ssh-honeypot",
         getpid()
     );
 
