@@ -132,3 +132,9 @@ spec:
 ```bash
 kubectl apply -f tiny-ssh-honeypot.yaml
 ```
+
+## Internal Notes
+
+```bash
+docker buildx build --tag wildwildangel/tiny-ssh-honeypot-build-dependencies --platform=linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x --push -f Dockerfile.libs .
+```

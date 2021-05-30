@@ -18,7 +18,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3.3.0
         with:
-          images: wildwildangel/tiny-ssh-honeypot
+          images: wildwildangel/tiny-ssh-honeypot-build-dependencies
           tags: type=raw,value=latest
 
       - name: Login to DockerHub

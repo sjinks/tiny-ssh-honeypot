@@ -1,6 +1,6 @@
 FROM alpine:3.13 AS build
 ARG BUILD_PARALLELISM=4
-RUN apk add --no-cache cmake make musl-dev gcc file ccache
+RUN apk add --no-cache cmake make musl-dev gcc file
 WORKDIR /build
 COPY . .
 RUN \
