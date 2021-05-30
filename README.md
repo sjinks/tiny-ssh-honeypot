@@ -1,5 +1,8 @@
 # tiny-ssh-honeypot
 
+[![Build](https://github.com/sjinks/tiny-ssh-honeypot/actions/workflows/build.yml/badge.svg)](https://github.com/sjinks/tiny-ssh-honeypot/actions/workflows/build.yml)
+[![Docker CI/CD](https://github.com/sjinks/tiny-ssh-honeypot/actions/workflows/docker.yml/badge.svg)](https://github.com/sjinks/tiny-ssh-honeypot/actions/workflows/docker.yml)
+
 `tiny-ssh-honeypot` is a lightweight low-interaction SSH honeypot. It is a spin-off of [`ssh-honeypotd`](https://github.com/sjinks/ssh-honeypotd) with fewer features but lower resource consumption.
 
 Unlike `ssh-honeypotd`, `tiny-ssh-honeypot` is a single-threaded event-driven application. Its architecture allows for handling much more connections while consuming much less memory. `tiny-ssh-honeypot` uses [libassh 1.0](http://www.nongnu.org/libassh/) and [libev 4.x](http://software.schmorp.de/pkg/libev.html) under the hood.
