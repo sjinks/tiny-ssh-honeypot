@@ -12,7 +12,7 @@ RUN \
     && \
     cmake --build build --config MinSizeRel -j 2 && \
     strip build/tiny-ssh-honeypot && \
-    setcap cap_net_bind_service=ep /tiny-ssh-honeypot
+    setcap cap_net_bind_service=ep build/tiny-ssh-honeypot
 
 FROM scratch
 COPY --from=build /build/build/tiny-ssh-honeypot /tiny-ssh-honeypot
