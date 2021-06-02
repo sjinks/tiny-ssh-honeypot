@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 #include <sys/random.h>
 #include <ev.h>
@@ -15,6 +16,7 @@
 void init_globals(struct globals_t* g)
 {
     memset(g, 0, sizeof(*g));
+    tzset();
 
     if (assh_deps_init() != ASSH_OK) {
         my_log("FATAL ERROR: Failed to initialize ASSH");
