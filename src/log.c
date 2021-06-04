@@ -12,14 +12,10 @@ void my_log(const char *format, ...)
 
     time(&now);
     localtime_r(&now, &timeinfo);
-    strftime(timestring, sizeof(timestring), "%Y-%m-%d %H:%M:%S", &timeinfo);
+    strftime(timestring, sizeof(timestring), "%F %T", &timeinfo);
 
-    fprintf(
-        stderr, "%s %s[%d]: ",
-        timestring,
-        "tiny-ssh-honeypot",
-        getpid()
-    );
+    fputs(timestring, stderr);
+    fputs(" tiny-ssh-honeypot: ", stderr);
 
     va_list ap;
     va_start(ap, format);
