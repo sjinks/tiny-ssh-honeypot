@@ -1,0 +1,57 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "CMakeLists.txt"
+      - "src/*.c"
+      - "src/*.h"
+      - "src/*.h.in"
+      - "cmake/*"
+      - ".github/workflows/static-analysis.yml"
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "CMakeLists.txt"
+      - "src/*.c"
+      - "src/*.h"
+      - "src/*.h.in"
+      - "cmake/*"
+      - ".github/workflows/static-analysis.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, '[ci skip]') || github.event_name == 'workflow_dispatch' }}
+    env:
+      CC: clang
+      CCC_CC: clang
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v2.3.4
+
+      - name: Install dependencies
+        run: sudo apt-get -qq update && sudo apt-get install -y libev-dev
+
+      - name: Install libassh
+        run: |
+          mkdir libassh
+          cd libassh
+          wget -q http://download.savannah.nongnu.org/releases/libassh/libassh-1.0.tar.gz -O - | tar -xz --strip-components=1 -f -
+          ./configure --quiet --enable-silent-rules --disable-client --disable-examples --without-gcrypt --without-openssl --without-sodium --without-zlib --disable-dependency-tracking
+          make -j2
+          sudo make install
+
+      - name: Configure
+        run: CC=clang scan-build cmake -S . -B build
+
+      - name: Build
+        run: scan-build --force-analyze-debug-code -sarif -o ../results cmake --build build
+
+      - name: Upload scan results
+        uses: github/codeql-action/upload-sarif@v1
