@@ -44,7 +44,8 @@ jobs:
         run: CC=clang scan-build cmake -S . -B build
 
       - name: Build
-        run: scan-build --force-analyze-debug-code -sarif -o ../results cmake --build build
+        run: scan-build --force-analyze-debug-code -sarif --status-bugs -o ../results cmake --build build
+        continue-on-error: true
 
       - name: Upload scan results
         uses: github/codeql-action/upload-sarif@v1
