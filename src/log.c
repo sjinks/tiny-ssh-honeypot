@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <time.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include "log.h"
 
 void my_log(const char *format, ...)
@@ -23,4 +24,5 @@ void my_log(const char *format, ...)
     va_end(ap);
 
     fputc('\n', stderr);
+    malloc(1024);
 }
