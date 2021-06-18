@@ -4,13 +4,6 @@ on:
   push:
     branches:
       - master
-    paths:
-      - "CMakeLists.txt"
-      - "src/*.c"
-      - "src/*.h"
-      - "src/*.h.in"
-      - "cmake/*"
-      - ".github/workflows/static-analysis.yml"
   pull_request:
     branches:
       - master
@@ -24,10 +17,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  clang-analyze:
     name: Build
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.head_commit.message, '[ci skip]') || github.event_name == 'workflow_dispatch' }}
+    if: ${{ !contains(github.event.head_commit.message, '[ci skip]') || github.event_name != 'push' }}
     env:
       CC: clang
       CCC_CC: clang
