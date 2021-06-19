@@ -46,6 +46,11 @@ jobs:
       - name: Build
         run: scan-build --force-analyze-debug-code -sarif --status-bugs -o ../results cmake --build build
         continue-on-error: true
+        id: build
 
       - name: Upload scan results
         uses: github/codeql-action/upload-sarif@v1
+
+      - name: Set exit code
+        run: exit 1
+        if: steps.build.outcome == 'failure'
