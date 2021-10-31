@@ -16,7 +16,7 @@ jobs:
 
       - name: Set up Docker Metadata
         id: meta
-        uses: docker/metadata-action@v3.5.0
+        uses: docker/metadata-action@v3.6.0
         with:
           images: wildwildangel/tiny-ssh-honeypot-build-dependencies
           tags: type=raw,value=latest
