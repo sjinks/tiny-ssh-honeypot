@@ -29,7 +29,7 @@ jobs:
           - "-DBUILD_STATIC_BINARY=ON -DFORCE_EXTERNAL_LIBEV=ON"
     steps:
       - name: Check out source code
-        uses: actions/checkout@v2.3.5
+        uses: actions/checkout@v2.4.0
 
       - name: Install dependencies
         run: sudo apt-get -qq update && sudo apt-get install -y libev-dev
