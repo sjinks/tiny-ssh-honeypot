@@ -1,4 +1,6 @@
 *
 !cmake/
+!patches/
 !src/
 !CMakeLists.txt
+!toolchain
