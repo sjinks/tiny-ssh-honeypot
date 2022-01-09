@@ -1,10 +1,11 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.18)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(ExternalProject)
 include(CheckLibraryExists)
 include(CheckCCompilerFlag)
+include(CheckLinkerFlag)
 
 project(tiny-ssh-honeypot VERSION 1.0.3 LANGUAGES C)
 
@@ -50,9 +51,9 @@ if(HAS_CF_FLTO)
         list(APPEND LTO_FLAGS -ffat-lto-objects)
     endif()
 
-    check_c_compiler_flag(-fuse-linker-plugin HAS_CF_FUSELINKERPLUGIN)
+    check_linker_flag(C -fuse-linker-plugin HAS_CF_FUSELINKERPLUGIN)
     if(HAS_CF_FUSELINKERPLUGIN)
-        list(APPEND LTO_FLAGS -fuse-linker-plugin)
+        list(APPEND LTO_LDFLAGS -fuse-linker-plugin)
     endif()
 endif()
 
@@ -103,13 +104,18 @@ if(NOT FORCE_EXTERNAL_LIBASSH)
     find_package(Libassh)
 endif()
 
+if(DEFINED ENV{HOSTSPEC})
+    set(CONFIGURE_HOST_FLAG "--host=$ENV{HOSTSPEC}")
+endif()
+
 if(NOT LIBASSH_FOUND)
     ExternalProject_Add(
         libassh
         URL http://download.savannah.nongnu.org/releases/libassh/libassh-1.0.tar.gz
         URL_HASH MD5=1705b4a78e249a55fcd762720aacbc5c
         DOWNLOAD_NO_PROGRESS ON
-        CONFIGURE_COMMAND <SOURCE_DIR>/configure --quiet --enable-silent-rules --disable-client --disable-examples --without-gcrypt --without-openssl --without-sodium --without-zlib --disable-dependency-tracking --prefix=${CMAKE_CURRENT_BINARY_DIR}/libassh CC=${C_COMPILER} CFLAGS=${EXT_CFLAGS} LDFLAGS=${EXT_LDFLAGS} AR=${CMAKE_AR} RANLIB=${CMAKE_RANLIB}
+        PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/patches/libassh.patch <SOURCE_DIR> && patch -p0 < libassh.patch
+        CONFIGURE_COMMAND <SOURCE_DIR>/configure ${CONFIGURE_HOST_FLAG} --quiet --enable-silent-rules --disable-client --disable-examples --without-gcrypt --without-openssl --without-sodium --without-zlib --disable-dependency-tracking --prefix=${CMAKE_CURRENT_BINARY_DIR}/libassh CC=${C_COMPILER} CFLAGS=${EXT_CFLAGS} LDFLAGS=${EXT_LDFLAGS} AR=${CMAKE_AR} RANLIB=${CMAKE_RANLIB}
     )
 
     set(LIBASSH_LIBRARIES    "${PROJECT_BINARY_DIR}/libassh/lib/${CMAKE_STATIC_LIBRARY_PREFIX}assh${CMAKE_STATIC_LIBRARY_SUFFIX}")
@@ -129,7 +135,7 @@ if(NOT LIBEV_FOUND)
         URL http://dist.schmorp.de/libev/Attic/libev-4.33.tar.gz
         URL_HASH MD5=a3433f23583167081bf4acdd5b01b34f
         DOWNLOAD_NO_PROGRESS ON
-        CONFIGURE_COMMAND <SOURCE_DIR>/configure --quiet --enable-silent-rules --disable-dependency-tracking --prefix=${CMAKE_CURRENT_BINARY_DIR}/libev CC=${C_COMPILER} CFLAGS=${EXT_CFLAGS} LDFLAGS=${EXT_LDFLAGS} AR=${CMAKE_AR} RANLIB=${CMAKE_RANLIB}
+        CONFIGURE_COMMAND <SOURCE_DIR>/configure ${CONFIGURE_HOST_FLAG} --quiet --enable-silent-rules --disable-dependency-tracking --prefix=${CMAKE_CURRENT_BINARY_DIR}/libev CC=${C_COMPILER} CFLAGS=${EXT_CFLAGS} LDFLAGS=${EXT_LDFLAGS} AR=${CMAKE_AR} RANLIB=${CMAKE_RANLIB}
     )
 
     set(LIBEV_LIBRARIES    "${PROJECT_BINARY_DIR}/libev/lib/${CMAKE_STATIC_LIBRARY_PREFIX}ev${CMAKE_STATIC_LIBRARY_SUFFIX}")
