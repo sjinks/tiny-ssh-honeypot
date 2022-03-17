@@ -1,4 +1,4 @@
-FROM alpine:3.15.0 AS build
+FROM alpine:3.15.1 AS build
 RUN apk add --no-cache cmake make musl-dev gcc
 WORKDIR /build
 COPY --from=wildwildangel/tiny-ssh-honeypot-build-dependencies /usr /usr
