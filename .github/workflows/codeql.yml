@@ -25,7 +25,7 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message, '[ci skip]') || github.event_name != 'push' }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3.0.0
+        uses: actions/checkout@v3.0.1
 
       - name: Install dependencies
         run: sudo apt-get -qq update && sudo apt-get install -y libev-dev
