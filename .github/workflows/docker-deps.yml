@@ -3,10 +3,11 @@ name: Docker CI/CD (Build Dependencies)
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   docker:
-    permissions:
-      contents: read
     name: Build Docker image with build dependencies
     runs-on: ubuntu-latest
     steps:
