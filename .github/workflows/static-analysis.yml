@@ -16,6 +16,9 @@ on:
       - ".github/workflows/static-analysis.yml"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   clang-analyze:
     name: Build
@@ -24,6 +27,9 @@ jobs:
     env:
       CC: clang
       CCC_CC: clang
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - name: Check out source code
         uses: actions/checkout@v3.0.2
@@ -41,7 +47,7 @@ jobs:
           sudo make install
 
       - name: Configure
-        run: CC=clang scan-build cmake -S . -B build
+        run: scan-build cmake -S . -B build
 
       - name: Build
         run: scan-build --force-analyze-debug-code -sarif --status-bugs -o ../results cmake --build build
