@@ -1,7 +1,7 @@
 FROM alpine:3.16.1@sha256:7580ece7963bfa863801466c0a488f11c86f85d9988051a9f9c68cb27f6b7872 AS build
 RUN apk add --no-cache cmake make musl-dev gcc
 WORKDIR /build
-COPY --from=wildwildangel/tiny-ssh-honeypot-build-dependencies /usr /usr
+COPY --from=wildwildangel/tiny-ssh-honeypot-build-dependencies@sha256:063d01963402ae200add46184aa0dff2e8b6baeb36e11d88324644c11e124cf0 /usr /usr
 COPY . .
 RUN \
     cmake -S . -B build \
@@ -16,7 +16,7 @@ RUN \
 # COPY does not preserve extended attributes, therefore we cannot set the proper capabilities
 # in the build image
 FROM scratch
-COPY --from=wildwildangel/setcap-static /setcap-static /!setcap-static
+COPY --from=wildwildangel/setcap-static@sha256:dd8997ef3340ad43e459c210d0ebea44e26bfbf4adf34d777ea3a7a9c3cefeda /setcap-static /!setcap-static
 COPY --from=build /build/build/tiny-ssh-honeypot /tiny-ssh-honeypot
 RUN ["/!setcap-static", "cap_net_bind_service=ep", "/tiny-ssh-honeypot"]
 ENTRYPOINT ["/tiny-ssh-honeypot"]
