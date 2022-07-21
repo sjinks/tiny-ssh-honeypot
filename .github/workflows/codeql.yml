@@ -32,7 +32,7 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message, '[ci skip]') || github.event_name != 'push' }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3.0.2
 
       - name: Install dependencies
         run: sudo apt-get -qq update && sudo apt-get install -y libev-dev
@@ -47,10 +47,10 @@ jobs:
           sudo make install
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@3e7e3b32d0fb8283594bb0a76cc60a00918b0969 # tag=v2
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+        uses: github/codeql-action/autobuild@3e7e3b32d0fb8283594bb0a76cc60a00918b0969 # tag=v2
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@3e7e3b32d0fb8283594bb0a76cc60a00918b0969 # tag=v2
