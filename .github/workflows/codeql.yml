@@ -47,10 +47,10 @@ jobs:
           sudo make install
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@cc7986c02bac29104a72998e67239bb5ee2ee110 # tag=v2
+        uses: github/codeql-action/init@18fe527fa8b29f134bb91f32f1a5dc5abb15ed7f # tag=v2
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@cc7986c02bac29104a72998e67239bb5ee2ee110 # tag=v2
+        uses: github/codeql-action/autobuild@18fe527fa8b29f134bb91f32f1a5dc5abb15ed7f # tag=v2
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@cc7986c02bac29104a72998e67239bb5ee2ee110 # tag=v2
+        uses: github/codeql-action/analyze@18fe527fa8b29f134bb91f32f1a5dc5abb15ed7f # tag=v2
