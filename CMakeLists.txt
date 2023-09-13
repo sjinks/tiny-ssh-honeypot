@@ -7,7 +7,7 @@ include(CheckLibraryExists)
 include(CheckCCompilerFlag)
 include(CheckLinkerFlag)
 
-project(tiny-ssh-honeypot VERSION 1.0.3 LANGUAGES C)
+project(tiny-ssh-honeypot VERSION 1.1.0 LANGUAGES C)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD 11)
@@ -111,10 +111,9 @@ endif()
 if(NOT LIBASSH_FOUND)
     ExternalProject_Add(
         libassh
-        URL http://download.savannah.nongnu.org/releases/libassh/libassh-1.0.tar.gz
-        URL_HASH MD5=1705b4a78e249a55fcd762720aacbc5c
+        URL http://download.savannah.nongnu.org/releases/libassh/libassh-1.1.tar.gz
+        URL_HASH MD5=94aae559e6b174b2b00e344186a69534
         DOWNLOAD_NO_PROGRESS ON
-        PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/patches/libassh.patch <SOURCE_DIR> && patch -p0 < libassh.patch
         CONFIGURE_COMMAND <SOURCE_DIR>/configure ${CONFIGURE_HOST_FLAG} --quiet --enable-silent-rules --disable-client --disable-examples --without-gcrypt --without-openssl --without-sodium --without-zlib --disable-dependency-tracking --prefix=${CMAKE_CURRENT_BINARY_DIR}/libassh CC=${C_COMPILER} CFLAGS=${EXT_CFLAGS} LDFLAGS=${EXT_LDFLAGS} AR=${CMAKE_AR} RANLIB=${CMAKE_RANLIB}
     )
 

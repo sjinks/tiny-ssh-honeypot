@@ -13,13 +13,13 @@ tiny-ssh-honeypot uses [CMake](https://cmake.org/documentation/) as its build sy
 
 The project has two optional dependencies:
 
-  1. libassh 1.0
+  1. libassh 1.1
   2. libev 4.x
 
 If those are not present, the build script will try to download and build them.
 
 The download locations are:
-  * libassh: http://download.savannah.nongnu.org/releases/libassh/libassh-1.0.tar.gz
+  * libassh: http://download.savannah.nongnu.org/releases/libassh/libassh-1.1.tar.gz
   * libev: http://dist.schmorp.de/libev/Attic/libev-4.33.tar.gz
 
 **NOTE:** the build script builds static versions of the downloaded libraries.
