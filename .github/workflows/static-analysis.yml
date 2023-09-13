@@ -41,7 +41,7 @@ jobs:
         run: |
           mkdir libassh
           cd libassh
-          wget -q http://download.savannah.nongnu.org/releases/libassh/libassh-1.0.tar.gz -O - | tar -xz --strip-components=1 -f -
+          wget -q http://download.savannah.nongnu.org/releases/libassh/libassh-1.1.tar.gz -O - | tar -xz --strip-components=1 -f -
           ./configure --quiet --enable-silent-rules --disable-client --disable-examples --without-gcrypt --without-openssl --without-sodium --without-zlib --disable-dependency-tracking
           make -j2
           sudo make install
