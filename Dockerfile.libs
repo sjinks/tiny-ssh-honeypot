@@ -19,7 +19,7 @@ RUN \
     make install DESTDIR=/rootfs
 
 WORKDIR /build/libassh
-RUN wget -q http://download.savannah.nongnu.org/releases/libassh/libassh-1.0.tar.gz -O - | tar xzf - --strip-components=1
+RUN wget -q http://download.savannah.nongnu.org/releases/libassh/libassh-1.1.tar.gz -O - | tar xzf - --strip-components=1
 RUN \
     ./configure \
         --quiet \
