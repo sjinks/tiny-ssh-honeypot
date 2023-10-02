@@ -1,4 +1,4 @@
-FROM alpine:3.18.3@sha256:7144f7bab3d4c2648d7e59409f15ec52a18006a128c733fcff20d3a4a54ba44a AS build
+FROM alpine:3.18.4@sha256:eece025e432126ce23f223450a0326fbebde39cdf496a85d8c016293fc851978 AS build
 RUN apk add --no-cache cmake make musl-dev gcc
 WORKDIR /build
 COPY --from=wildwildangel/tiny-ssh-honeypot-build-dependencies@sha256:865842990a57a343055f673f87e300fdb71d3b28be1e0f3d5b04af4e481d106f /usr /usr
