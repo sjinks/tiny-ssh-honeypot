@@ -2,6 +2,8 @@
 
 [![Build](https://github.com/sjinks/tiny-ssh-honeypot/actions/workflows/build.yml/badge.svg)](https://github.com/sjinks/tiny-ssh-honeypot/actions/workflows/build.yml)
 [![Docker CI/CD](https://github.com/sjinks/tiny-ssh-honeypot/actions/workflows/docker.yml/badge.svg)](https://github.com/sjinks/tiny-ssh-honeypot/actions/workflows/docker.yml)
+[![CodeQL Scan](https://github.com/sjinks/tiny-ssh-honeypot/actions/workflows/codeql.yml/badge.svg)](https://github.com/sjinks/tiny-ssh-honeypot/actions/workflows/codeql.yml)
+[![Static Code Analysis](https://github.com/sjinks/tiny-ssh-honeypot/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/sjinks/tiny-ssh-honeypot/actions/workflows/static-analysis.yml)
 
 `tiny-ssh-honeypot` is a lightweight, low-interaction SSH honeypot. It is a spin-off of [`ssh-honeypotd`](https://github.com/sjinks/ssh-honeypotd) with fewer features but lower resource consumption.
 
