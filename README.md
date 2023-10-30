@@ -15,8 +15,8 @@ tiny-ssh-honeypot uses [CMake](https://cmake.org/documentation/) as its build sy
 
 The project has two optional dependencies:
 
-  1. libassh 1.1
-  2. libev 4.x
+  1. [libassh](https://www.nongnu.org/libassh/) 1.1
+  2. [libev](http://software.schmorp.de/pkg/libev.html) 4.x
 
 If those are not present, the build script will try to download and build them.
 
