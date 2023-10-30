@@ -1,9 +1,0 @@
-extraction:
-  cpp:
-    after_prepare:
-      - |
-        wget -q https://cmake.org/files/v3.22/cmake-3.22.0-linux-x86_64.sh && \
-        mkdir tools && \
-        /bin/sh ./cmake-3.22.0-linux-x86_64.sh --skip-license --prefix="$(pwd)/tools" --exclude-subdir && \
-        export PATH="$(pwd)/tools/bin:${PATH}"
-
