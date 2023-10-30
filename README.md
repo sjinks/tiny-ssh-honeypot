@@ -44,22 +44,23 @@ cmake --build build
 If you have [Buildx](https://docs.docker.com/buildx/working-with-buildx/) installed:
 
 ```bash
-docker buildx build --pull --tag wildwildangel/tiny-ssh-honeypot --load -f Dockerfile.buildx .
+docker buildx build --pull --tag wildwildangel/tiny-ssh-honeypot .
 ```
 
-If you have [BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/) enabled:
+Otherwise, if you have [BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/) enabled:
 
 ```bash
-DOCKER_BUILDKIT=1 docker build --pull --tag wildwildangel/tiny-ssh-honeypot --load -f Dockerfile.buildx .
+docker build --pull --tag wildwildangel/tiny-ssh-honeypot .
 ```
 
-Otherwise,
+Or, for Docker versions earlier than 23.0,
 
 ```bash
-docker build --pull -t wildwildangel/tiny-ssh-honeypot -f Dockerfile .
+DOCKER_BUILDKIT=1 docker build --pull --tag wildwildangel/tiny-ssh-honeypot .
 ```
 
-The difference is that without BuildKit or Buildx, Docker does not copy the [extended file attributes](https://en.wikipedia.org/wiki/Extended_file_attributes#Linux) between images; therefore, several extra steps are necessary to build the final image.
+Note: [BuildKit is the default builder for users on Docker Desktop and Docker Engine v23.0 and later.](https://docs.docker.com/build/buildkit/#getting-started)
+
 
 ## Usage
 
