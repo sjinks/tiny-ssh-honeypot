@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.2
-FROM --platform=amd64 wildwildangel/linux-musl-cross-compilers@sha256:47867c3664f53b99132899671323b4eeffab46a8c3fc1445dead0af6b20c643c AS build-base
+FROM --platform=amd64 wildwildangel/linux-musl-cross-compilers@sha256:91cc5f7bd0dcc0e65660c2b165225a11ba3d8da0bbb01a368210f5f5906720e3 AS build-base
 RUN apk add --no-cache libcap file patch
 COPY toolchain /toolchain
 
