@@ -1,22 +1,19 @@
-FROM alpine:3.18.4@sha256:eece025e432126ce23f223450a0326fbebde39cdf496a85d8c016293fc851978 AS build
-RUN apk add --no-cache cmake make musl-dev gcc
-WORKDIR /build
-COPY --from=wildwildangel/tiny-ssh-honeypot-build-dependencies@sha256:865842990a57a343055f673f87e300fdb71d3b28be1e0f3d5b04af4e481d106f /usr /usr
+# syntax = docker/dockerfile:1.2
+FROM --platform=amd64 wildwildangel/linux-musl-cross-compilers@sha256:47867c3664f53b99132899671323b4eeffab46a8c3fc1445dead0af6b20c643c AS build-base
+RUN apk add --no-cache libcap file patch
+COPY toolchain /toolchain
+
+FROM build-base AS build
+ARG TARGETPLATFORM
+WORKDIR /src
 COPY . .
 RUN \
-    cmake -S . -B build \
-        -DCMAKE_BUILD_TYPE=MinSizeRel \
-        -DBUILD_STATIC_BINARY=ON \
-        -DCMAKE_AR=/usr/bin/gcc-ar \
-        -DCMAKE_RANLIB=/usr/bin/gcc-ranlib \
-    && \
+    $(setvars ${TARGETPLATFORM}) && \
+    cmake -S . -B build -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_STATIC_BINARY=ON && \
     cmake --build build --config MinSizeRel -j 2 && \
-    strip build/tiny-ssh-honeypot
+    strip build/tiny-ssh-honeypot && \
+    setcap cap_net_bind_service=ep build/tiny-ssh-honeypot
 
-# COPY does not preserve extended attributes, therefore we cannot set the proper capabilities
-# in the build image
 FROM scratch
-COPY --from=wildwildangel/setcap-static@sha256:dd8997ef3340ad43e459c210d0ebea44e26bfbf4adf34d777ea3a7a9c3cefeda /setcap-static /!setcap-static
-COPY --from=build /build/build/tiny-ssh-honeypot /tiny-ssh-honeypot
-RUN ["/!setcap-static", "cap_net_bind_service=ep", "/tiny-ssh-honeypot"]
+COPY --from=build /src/build/tiny-ssh-honeypot /tiny-ssh-honeypot
 ENTRYPOINT ["/tiny-ssh-honeypot"]
