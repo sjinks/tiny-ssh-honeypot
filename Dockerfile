@@ -1,17 +1,24 @@
-# syntax = docker/dockerfile:1.6@sha256:ac85f380a63b13dfcefa89046420e1781752bab202122f8f50032edf31be0021
-FROM --platform=amd64 wildwildangel/linux-musl-cross-compilers@sha256:c8e3cfdc2dfae66f0c63e9567d417fb453eae46eadc981ae838dc32d0da95322 AS build-base
-RUN apk add --no-cache libcap file patch
-COPY toolchain /toolchain
+FROM --platform=${BUILDPLATFORM} tonistiigi/xx:latest@sha256:0cd3f05c72d6c9b038eb135f91376ee1169ef3a330d34e418e65e2a5c2e9c0d4 AS xx
 
-FROM build-base AS build
+FROM --platform=${BUILDPLATFORM} alpine:3.19.1@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b AS build
+COPY --from=xx / /
 ARG TARGETPLATFORM
+RUN \
+    apk add --no-cache clang llvm lld make cmake file pkgconf autoconf automake libcap && \
+    xx-apk add --no-cache gcc musl-dev libev-dev
+
 WORKDIR /src
 COPY . .
+
 RUN \
-    $(setvars ${TARGETPLATFORM}) && \
-    cmake -S . -B build -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_STATIC_BINARY=ON && \
-    cmake --build build --config MinSizeRel -j 2 && \
-    strip build/tiny-ssh-honeypot && \
+    set -x && \
+    export ARCHITECTURE=$(xx-info alpine-arch) && \
+    export SYSROOT=$(xx-info sysroot) && \
+    export HOSTSPEC=$(xx-info triple) && \
+    xx-clang --setup-target-triple && \
+    cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=toolchain -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_STATIC_BINARY=ON && \
+    cmake --build build -j 2 && \
+    ${HOSTSPEC}-strip build/tiny-ssh-honeypot && \
     setcap cap_net_bind_service=ep build/tiny-ssh-honeypot
 
 FROM scratch
