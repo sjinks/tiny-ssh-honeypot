@@ -125,4 +125,9 @@ void parse_command_line(int argc, char** argv, struct globals_t* g)
             exit(EXIT_FAILURE);
         }
     }
+
+    if (g->sockets_count == 0) {
+        g->sockets_count = 1;
+        g->bind_addresses[0] = my_strdup("0.0.0.0");
+    }
 }

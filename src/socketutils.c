@@ -15,7 +15,13 @@ void create_sockets(struct globals_t* g)
 {
     size_t good = 0;
     const int on = 1;
-    struct sockaddr_in sin;
+
+    union {
+        struct sockaddr sa;
+        struct sockaddr_in sa_in;
+        struct sockaddr_in6 sa_in6;
+    } sin;
+
     int res;
 
     g->sockets = calloc(g->sockets_count, sizeof(int));
@@ -24,12 +30,13 @@ void create_sockets(struct globals_t* g)
     uint16_t port = (uint16_t)atoi(g->bind_port);
     for (size_t i = 0; i < g->sockets_count; ++i) {
         memset(&sin, 0, sizeof(sin));
-        sin.sin_port = htons(port);
-        if (inet_pton(AF_INET, g->bind_addresses[i], &sin.sin_addr) == 1) {
-            sin.sin_family = AF_INET;
+        if (inet_pton(AF_INET, g->bind_addresses[i], &sin.sa_in.sin_addr) == 1) {
+            sin.sa_in.sin_family = AF_INET;
+            sin.sa_in.sin_port = htons(port);
         }
-        else if (inet_pton(AF_INET6, g->bind_addresses[i], &sin.sin_addr) == 1) {
-            sin.sin_family = AF_INET6;
+        else if (inet_pton(AF_INET6, g->bind_addresses[i], &sin.sa_in6.sin6_addr) == 1) {
+            sin.sa_in6.sin6_family = AF_INET6;
+            sin.sa_in6.sin6_port = htons(port);
         }
         else {
             g->sockets[i] = -1;
@@ -39,7 +46,7 @@ void create_sockets(struct globals_t* g)
             continue;
         }
 
-        g->sockets[i] = socket(PF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP);
+        g->sockets[i] = socket(sin.sa.sa_family, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP);
         if (g->sockets[i] == -1) {
             fprintf(stderr, "ERROR: failed to create socket: %s\n", strerror(errno));
             free(g->bind_addresses[i]);
@@ -55,7 +62,7 @@ void create_sockets(struct globals_t* g)
             fprintf(stderr, "WARNING: setsockopt(IP_FREEBIND) failed: %s\n", strerror(errno));
         }
 
-        res = bind(g->sockets[i], (struct sockaddr*)&sin, sizeof(sin));
+        res = bind(g->sockets[i], &sin.sa, sizeof(sin));
         if (-1 == res) {
             fprintf(stderr, "ERROR: failed to bind() to %s:%u: %s\n", g->bind_addresses[i], (unsigned int)port, strerror(errno));
             close(g->sockets[i]);

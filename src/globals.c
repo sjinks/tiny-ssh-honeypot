@@ -31,10 +31,9 @@ void init_globals(struct globals_t* g)
 
     g->bind_port         = my_strdup("22");
     g->sockets_allocated = 1;
-    g->sockets_count     = 1;
+    g->sockets_count     = 0;
     g->bind_addresses    = calloc(g->sockets_allocated, sizeof(char*));
     check_alloc(g->bind_addresses, "calloc");
-    g->bind_addresses[0] = my_strdup("0.0.0.0");
     g->sockets           = NULL;
 
     signal(SIGPIPE, SIG_IGN);
