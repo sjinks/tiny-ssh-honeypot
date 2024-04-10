@@ -3,7 +3,9 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include <sys/random.h>
+#ifndef __APPLE__
+#   include <sys/random.h>
+#endif
 #include <ev.h>
 #include <assh/assh_algo.h>
 #include <assh/assh_buffer.h>
@@ -41,10 +43,14 @@ void init_globals(struct globals_t* g)
     struct assh_buffer_s buf;
     buf.data = g->seed;
     buf.len  = sizeof(g->seed);
+#ifdef __APPLE__
+    arc4random_buf(g->seed, sizeof(g->seed));
+#else
     /* Reads of up to 256 bytes will always return as many bytes as requested and will not be interrupted by signals */
     if (getrandom(g->seed, sizeof(g->seed), 0) != sizeof(g->seed)) {
         my_log("WARNING: unable to seed the CSPRNG");
     }
+#endif
 
     if (
         assh_context_create(&g->context, ASSH_SERVER, NULL, NULL, NULL, &buf) ||

@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include "socketutils.h"
 #include "globals.h"
 #include "utils.h"
@@ -46,7 +47,11 @@ void create_sockets(struct globals_t* g)
             continue;
         }
 
+#if defined(SOCK_NONBLOCK)
         g->sockets[i] = socket(sin.sa.sa_family, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP);
+#else
+        g->sockets[i] = socket(sin.sa.sa_family, SOCK_STREAM, IPPROTO_TCP);
+#endif
         if (g->sockets[i] == -1) {
             fprintf(stderr, "ERROR: failed to create socket: %s\n", strerror(errno));
             free(g->bind_addresses[i]);
@@ -54,13 +59,19 @@ void create_sockets(struct globals_t* g)
             continue;
         }
 
+#if !defined(SOCK_NONBLOCK)
+        fcntl(g->sockets[i], F_SETFL, fcntl(g->sockets[i], F_GETFL, 0) | O_NONBLOCK);
+#endif
+
         if (setsockopt(g->sockets[i], SOL_SOCKET, SO_REUSEADDR, &on, sizeof(int)) == -1) {
             fprintf(stderr, "WARNING: setsockopt(SO_REUSEADDR) failed: %s\n", strerror(errno));
         }
 
+#if defined(SOL_IP) && defined(IP_FREEBIND)
         if (setsockopt(g->sockets[i], SOL_IP, IP_FREEBIND, &on, sizeof(int)) == -1) {
             fprintf(stderr, "WARNING: setsockopt(IP_FREEBIND) failed: %s\n", strerror(errno));
         }
+#endif
 
         if (sin.sa.sa_family == AF_INET6 && setsockopt(g->sockets[i], IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(int)) == -1) {
             fprintf(stderr, "WARNING: setsockopt(IPV6_V6ONLY) failed: %s\n", strerror(errno));
