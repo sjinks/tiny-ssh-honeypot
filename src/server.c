@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <ev.h>
 #include <assh/assh_buffer.h>
 #include <assh/assh_session.h>
@@ -191,12 +192,24 @@ static void connection_handler(struct ev_loop* loop, ev_io* w, int revents)
 {
     struct sockaddr_storage addr;
     socklen_t len = sizeof(addr);
+    int fd;
 
-    int fd = accept4(w->fd, (struct sockaddr*)&addr, &len, SOCK_NONBLOCK);
+#if !defined(SOCK_NONBLOCK)
+    fd = accept(w->fd, (struct sockaddr*)&addr, &len);
+    if (fd < 0) {
+        perror("accept");
+        return;
+    }
+
+    int flags = fcntl(fd, F_GETFL, 0);
+    fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+#else
+    fd = accept4(w->fd, (struct sockaddr*)&addr, &len, SOCK_NONBLOCK);
     if (fd < 0) {
         perror("accept4");
         return;
     }
+#endif
 
     struct conn_data_t* data = calloc(1, sizeof(struct conn_data_t));
     if (!data) {
