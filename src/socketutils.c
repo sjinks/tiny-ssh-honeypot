@@ -62,6 +62,10 @@ void create_sockets(struct globals_t* g)
             fprintf(stderr, "WARNING: setsockopt(IP_FREEBIND) failed: %s\n", strerror(errno));
         }
 
+        if (sin.sa.sa_family == AF_INET6 && setsockopt(g->sockets[i], IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(int)) == -1) {
+            fprintf(stderr, "WARNING: setsockopt(IPV6_V6ONLY) failed: %s\n", strerror(errno));
+        }
+
         res = bind(g->sockets[i], &sin.sa, sizeof(sin));
         if (-1 == res) {
             fprintf(stderr, "ERROR: failed to bind() to %s:%u: %s\n", g->bind_addresses[i], (unsigned int)port, strerror(errno));
