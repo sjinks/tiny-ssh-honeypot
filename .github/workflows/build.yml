@@ -83,7 +83,7 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Configure
-        run: cmake -S . -B build -DDCMAKE_TOOLCHAIN_FILE=toolchain
+        run: cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=toolchain
         env:
           ARCHITECTURE: arm64
           HOSTSPEC: aarch64-apple-darwin20.0.0
