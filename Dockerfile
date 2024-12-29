@@ -13,7 +13,7 @@ COPY . .
 RUN \
     set -x && \
     export ARCHITECTURE=$(xx-info alpine-arch) && \
-    if [ "${ARCHITECTURE}" = "ppc64le" ]; then export XX_CC_PREFER_LINKER=ld; fi && \
+    export XX_CC_PREFER_LINKER=ld && \
     export SYSROOT=$(xx-info sysroot) && \
     export HOSTSPEC=$(xx-info triple) && \
     xx-clang --setup-target-triple && \
