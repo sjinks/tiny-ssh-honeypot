@@ -55,7 +55,7 @@ jobs:
         id: build
 
       - name: Upload scan results
-        uses: github/codeql-action/upload-sarif@181d5eefc20863364f96762470ba6f862bdef56b # v3
+        uses: github/codeql-action/upload-sarif@d6bbdef45e766d081b84a2def353b0055f728d3e # v3
 
       - name: Set exit code
         run: exit 1
