@@ -6,6 +6,7 @@
 #include <assh/helper_key.h>
 #include "cmdline.h"
 #include "globals.h"
+#include "log.h"
 #include "utils.h"
 #include "version.h"
 
@@ -13,6 +14,7 @@ static struct option long_options[] = {
     { "host-key",   required_argument, NULL, 'k' },
     { "address",    required_argument, NULL, 'b' },
     { "port",       required_argument, NULL, 'p' },
+    { "terse-logs", no_argument,       NULL, 't' },
     { "help",       no_argument,       NULL, 'h' },
     { "version",    no_argument,       NULL, 'v' },
     { NULL,         0,                 NULL, 0   }
@@ -31,6 +33,7 @@ static int usage(void)
         "                        Will be automatically generated if not provided\n"
         "  -b, --address ADDRESS the IP address to bind to (default: 0.0.0.0)\n"
         "  -p, --port PORT       the port to bind to (default: 22)\n"
+        "  -t, --terse-logs      produce more compact log output\n"
         "  -h, --help            display this help and exit\n"
         "  -v, --version         output version information and exit\n\n"
         "Please report bugs here: <https://github.com/sjinks/ssh-honeypotd/issues>\n"
@@ -58,7 +61,7 @@ void parse_command_line(int argc, char** argv, struct globals_t* g)
         int c = getopt_long(
             argc,
             argv,
-            "k:b:p:hv",
+            "k:b:p:thv",
             long_options,
             &option_index
         );
@@ -97,6 +100,10 @@ void parse_command_line(int argc, char** argv, struct globals_t* g)
             case 'p':
                 free(g->bind_port);
                 g->bind_port = my_strdup(optarg);
+                break;
+
+            case 't':
+                terse_logs = 1;
                 break;
 
             case 'h':
