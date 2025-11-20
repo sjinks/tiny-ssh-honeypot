@@ -79,7 +79,11 @@ void create_sockets(struct globals_t* g)
 
         res = bind(g->sockets[i], &sin.sa, sizeof(sin));
         if (-1 == res) {
-            fprintf(stderr, "ERROR: failed to bind() to %s:%u: %s\n", g->bind_addresses[i], (unsigned int)port, strerror(errno));
+            int saved_errno = errno;
+            fprintf(stderr, "ERROR: failed to bind() to %s:%u: %s\n", g->bind_addresses[i], (unsigned int)port, strerror(saved_errno));
+            if (saved_errno == EACCES && port < 1024) {
+                fputs("Hint: try running as root to bind to ports below 1024 or give the CAP_NET_BIND_SERVICE capability to the executable\n", stderr);
+            }
             close(g->sockets[i]);
             g->sockets[i] = -1;
             free(g->bind_addresses[i]);
