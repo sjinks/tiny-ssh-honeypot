@@ -23,9 +23,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
-
       - name: Set up Docker Metadata
         id: meta
         uses: docker/metadata-action@318604b99e75e41977312d83839a89be02ca4893 # v5.9.0
