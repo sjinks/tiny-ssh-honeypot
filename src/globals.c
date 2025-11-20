@@ -89,6 +89,7 @@ void free_globals(struct globals_t* g)
         free(g->bind_addresses);
     }
 
+    // Release the context only if there are no more sessions; `assh_context_release()` is unconditional.
     if (assh_context_refcount(g->context) == 0) {
         assh_context_release(g->context);
     }
