@@ -52,7 +52,7 @@ static int ssh_loop(struct conn_data_t* data, int fd, int events)
             return 0;
         }
 
-        switch ((int)event.id) {
+        switch (event.id) {
             case ASSH_EVENT_READ:
                 if (!(events & EV_READ)) {
                     assh_event_done(session, &event, ASSH_OK);
@@ -74,13 +74,15 @@ static int ssh_loop(struct conn_data_t* data, int fd, int events)
                 break;
 
             case ASSH_EVENT_SESSION_ERROR:
-                my_log(
-                    "[%s:%d => %s:%d]: SSH error: %s",
-                    data->ipstr, data->port, data->my_ipstr, data->my_port,
-                    assh_error_str(event.session.error.code)
-                );
+                if (data->state != TRIED_AUTH || (int)event.session.error.code != 0x2100) {
+                    my_log(
+                        "[%s:%d => %s:%d]: SSH error: %s (%X)",
+                        data->ipstr, data->port, data->my_ipstr, data->my_port,
+                        assh_error_str(event.session.error.code), (int)event.session.error.code
+                    );
+                }
 
-                assh_event_done(session, &event, ASSH_ERR_INPUT_OVERFLOW);
+                assh_event_done(session, &event, ASSH_OK);
                 break;
 
             case ASSH_EVENT_KEX_DONE:
