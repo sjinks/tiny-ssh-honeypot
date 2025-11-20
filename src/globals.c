@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <sys/syslog.h>
 #include <time.h>
 #include <unistd.h>
+#include <syslog.h>
 #ifndef __APPLE__
 #   include <sys/random.h>
 #endif
@@ -18,6 +20,7 @@
 
 void init_globals(struct globals_t* g)
 {
+    openlog("tiny-ssh-honeypot", LOG_PID | LOG_NDELAY | LOG_PERROR, LOG_DAEMON);
     memset(g, 0, sizeof(*g));
     tzset();
 
@@ -94,4 +97,6 @@ void free_globals(struct globals_t* g)
     if (assh_context_refcount(g->context) == 0) {
         assh_context_release(g->context);
     }
+
+    closelog();
 }
