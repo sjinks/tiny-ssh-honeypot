@@ -15,10 +15,9 @@ void my_log(const char *format, ...)
 
         time(&now);
         localtime_r(&now, &timeinfo);
-        strftime(timestring, sizeof(timestring), "%F %T", &timeinfo);
+        strftime(timestring, sizeof(timestring), "%F %T ", &timeinfo);
 
         fputs(timestring, stderr);
-        fputc(' ', stderr);
     }
 
     fputs("tiny-ssh-honeypot: ", stderr);
