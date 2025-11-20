@@ -7,7 +7,7 @@ include(CheckLibraryExists)
 include(CheckCCompilerFlag)
 include(CheckLinkerFlag)
 
-project(tiny-ssh-honeypot VERSION 1.1.0 LANGUAGES C)
+project(tiny-ssh-honeypot VERSION 1.2.0 LANGUAGES C)
 
 option(BUILD_STATIC_BINARY     "Build static binary"       OFF)
 option(FORCE_EXTERNAL_LIBEV    "Do not use system libev"   OFF)
