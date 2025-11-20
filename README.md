@@ -71,7 +71,6 @@ Mandatory arguments for long options are mandatory for short options, too.
 * `-k`, `--host-key FILE`: the file containing the private host key (RSA, DSA, ECDSA, ED25519). As a fallback mechanism, the program will try to generate the RSA and ED25519 keys automatically.
 * `-b`, `--address ADDRESS`: the IP address to bind to (default: 0.0.0.0). You can specify this option multiple times.
 * `-p`, `--port PORT`: the port to bind to (default: 22).
-* `-t`, `--terse-logs`: produce more compact log output (omit timestamp).
 * `-h`, `--help`: display the help screen and exit.
 * `-v`, `--version`: output version information and exit.
 
