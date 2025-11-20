@@ -239,6 +239,7 @@ static void connection_handler(struct ev_loop* loop, ev_io* w, int revents)
     st = assh_session_create(g->context, &data->session);
     if (st) {
         fprintf(stderr, "ERROR: assh_session_create() failed\n");
+        free(data);
         close(fd);
         return;
     }
