@@ -28,7 +28,16 @@ void create_sockets(struct globals_t* g)
     g->sockets = calloc(g->sockets_count, sizeof(int));
     check_alloc(g->sockets, "calloc");
 
-    uint16_t port = (uint16_t)atoi(g->bind_port);
+    char* endptr = NULL;
+    errno = 0;
+    long int p = strtol(g->bind_port, &endptr, 10);
+    if (errno != 0 || endptr == g->bind_port || *endptr != '\0' || p <= 0 || p > 65535) {
+        fprintf(stderr, "FATAL ERROR: invalid port: %s\n", g->bind_port);
+        exit(EXIT_FAILURE);
+    }
+
+    uint16_t port = (uint16_t)p;
+
     for (size_t i = 0; i < g->sockets_count; ++i) {
         memset(&sin, 0, sizeof(sin));
         if (inet_pton(AF_INET, g->bind_addresses[i], &sin.sa_in.sin_addr) == 1) {
