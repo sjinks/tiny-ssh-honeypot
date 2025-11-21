@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
-#include <sys/syslog.h>
 #include <syslog.h>
 #include <time.h>
 #include <sys/types.h>
@@ -107,7 +106,7 @@ static int ssh_loop(struct conn_data_t* data, int fd, int events)
                 struct assh_event_userauth_server_password_s* auth = &event.userauth_server.password;
                 if (auth->username.size > INT_MAX || auth->password.size > INT_MAX) {
                     syslog(
-                        LOG_NOTICE,
+                        LOG_WARNING,
                         "[%s:%d => %s:%d]: input overflow",
                         data->ipstr, data->port, data->my_ipstr, data->my_port
                     );
