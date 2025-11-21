@@ -41,7 +41,6 @@ target_sources(
     tiny-ssh-honeypot PRIVATE
     src/cmdline.c
     src/globals.c
-    src/log.c
     src/main.c
     src/server.c
     src/socketutils.c
