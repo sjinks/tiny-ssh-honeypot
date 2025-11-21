@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <sys/syslog.h>
+#include <syslog.h>
 #include <time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -15,7 +17,6 @@
 #include <assh/helper_io.h>
 #include "server.h"
 #include "globals.h"
-#include "log.h"
 #include "socketutils.h"
 
 enum connection_state_t {
@@ -75,7 +76,8 @@ static int ssh_loop(struct conn_data_t* data, int fd, int events)
 
             case ASSH_EVENT_SESSION_ERROR:
                 if (data->state != TRIED_AUTH || (int)event.session.error.code != 0x2100) {
-                    my_log(
+                    syslog(
+                        LOG_NOTICE,
                         "[%s:%d => %s:%d]: SSH error: %s (%X)",
                         data->ipstr, data->port, data->my_ipstr, data->my_port,
                         assh_error_str(event.session.error.code), (int)event.session.error.code
@@ -104,7 +106,8 @@ static int ssh_loop(struct conn_data_t* data, int fd, int events)
             case ASSH_EVENT_USERAUTH_SERVER_PASSWORD: {
                 struct assh_event_userauth_server_password_s* auth = &event.userauth_server.password;
                 if (auth->username.size > INT_MAX || auth->password.size > INT_MAX) {
-                    my_log(
+                    syslog(
+                        LOG_NOTICE,
                         "[%s:%d => %s:%d]: input overflow",
                         data->ipstr, data->port, data->my_ipstr, data->my_port
                     );
@@ -112,7 +115,8 @@ static int ssh_loop(struct conn_data_t* data, int fd, int events)
                     assh_event_done(session, &event, ASSH_ERR_INPUT_OVERFLOW);
                 }
                 else {
-                    my_log(
+                    syslog(
+                        LOG_WARNING,
                         "[%s:%d => %s:%d]: login attempt for user: %.*s (password: %.*s)",
                         data->ipstr,
                         data->port,
@@ -157,19 +161,22 @@ static void run_ssh_loop(struct ev_loop* loop, struct conn_data_t* data, int rev
         close(fd);
 
         if (data->state == PRE_KEX) {
-            my_log(
+            syslog(
+                LOG_WARNING,
                 "[%s:%d => %s:%d]: did not receive identification string",
                 data->ipstr, data->port, data->my_ipstr, data->my_port
             );
         }
         else if (data->state == PRE_AUTH) {
-            my_log(
+            syslog(
+                LOG_WARNING,
                 "[%s:%d => %s:%d]: connection closed by authenticating user",
                 data->ipstr, data->port, data->my_ipstr, data->my_port
             );
         }
 
-        my_log(
+        syslog(
+            LOG_INFO,
             "[%s:%d => %s:%d]: closing connection",
             data->ipstr, data->port, data->my_ipstr, data->my_port
         );
@@ -231,7 +238,8 @@ static void connection_handler(struct ev_loop* loop, ev_io* w, int revents)
         data->my_port     = -1;
     }
 
-    my_log(
+    syslog(
+        LOG_INFO,
         "[%s:%d => %s:%d]: incoming connection",
         data->ipstr, data->port, data->my_ipstr, data->my_port
     );
