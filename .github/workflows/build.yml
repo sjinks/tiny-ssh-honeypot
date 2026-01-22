@@ -24,7 +24,7 @@ jobs:
           - "-DBUILD_STATIC_BINARY=ON -DFORCE_EXTERNAL_LIBEV=ON"
     steps:
       - name: Check out source code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install dependencies
         run: sudo apt-get -qq update && sudo apt-get install -y libev-dev
@@ -55,7 +55,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out source code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Configure
         run: cmake -S . -B build
@@ -80,7 +80,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out source code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Configure
         run: cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=toolchain
